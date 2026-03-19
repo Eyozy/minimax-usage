@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+*.local
+.nuxt/
+.output/
+.data/
+tests/*

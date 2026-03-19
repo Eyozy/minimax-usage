@@ -1,0 +1,36 @@
+{
+  "name": "minimax-usage-tool",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:web": "nuxt dev --port 3001",
+    "dev:api": "tsx watch src/server.ts",
+    "dev": "concurrently -k -n web,api -c blue,green \"npm:dev:web\" \"npm:dev:api\"",
+    "test": "tsx --test",
+    "build:web": "nuxt generate && if [ -d .output/public ]; then mkdir -p dist && cp -R .output/public/. dist/; fi",
+    "build:api": "tsc -p tsconfig.api.json",
+    "build": "npm run build:web && npm run build:api",
+    "build:vercel": "npm run build:web",
+    "start:web": "nuxt start",
+    "start:api": "node dist/api/src/server.js"
+  },
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "fastify": "^5.8.2",
+    "nuxt": "^4.2.0",
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^2.8.0",
+    "@types/node": "^25.5.0",
+    "@vercel/node": "^5.1.0",
+    "concurrently": "^9.2.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}

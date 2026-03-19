@@ -1,0 +1,137 @@
+<script setup lang="ts">
+import type { UsageViewModel } from "../../shared/usage";
+import { formatCountdown } from "../utils/api";
+
+useSeoMeta({
+  title: "查询 | MiniMax Token Plan 用量查询",
+  description: "输入 MiniMax API Key，查看 Token Plan 已使用额度、剩余额度与模型明细。",
+});
+
+const query = useUsageQuery();
+const keyModel = computed({
+  get: () => query.apiKey.value,
+  set: (value: string) => {
+    query.saveApiKey(value);
+  },
+});
+
+const timeWindow = computed(() => query.vm.value?.timeWindow ?? "");
+const isOk = computed(() => query.vm.value?.ok ?? false);
+const now = ref(Date.now());
+let countdownTimer: number | null = null;
+
+function formatNumber(value: number | null | undefined) {
+  if (value === null || value === undefined) {
+    return "-";
+  }
+
+  return value.toLocaleString("zh-CN");
+}
+
+onMounted(() => {
+  countdownTimer = window.setInterval(() => {
+    now.value = Date.now();
+  }, 1000);
+});
+
+onBeforeUnmount(() => {
+  if (!countdownTimer) {
+    return;
+  }
+
+  window.clearInterval(countdownTimer);
+});
+
+type SummaryItem = { label: string; value: string; tone?: "default" | "primary" };
+
+const EMPTY_CURRENT = [
+  { label: "已使用", value: "-", tone: "primary" as const },
+  { label: "剩余", value: "-" },
+  { label: "总额度", value: "-" },
+  { label: "重置时间", value: "-" },
+];
+
+const EMPTY_WEEKLY = [
+  { label: "本周已使用", value: "-", tone: "default" as const },
+  { label: "本周剩余", value: "-" },
+  { label: "本周总额度", value: "-" },
+  { label: "本周重置", value: "-" },
+];
+
+function buildSummaryItems(vm: UsageViewModel | null, weekly = false): SummaryItem[] {
+  if (!vm) {
+    return weekly ? EMPTY_WEEKLY : EMPTY_CURRENT;
+  }
+
+  return weekly
+    ? [
+        { label: "本周已使用", value: formatNumber(vm.weeklyUsedCount) },
+        { label: "本周剩余", value: formatNumber(vm.weeklyRemainingCount) },
+        { label: "本周总额度", value: formatNumber(vm.weeklyTotalCount) },
+        { label: "本周重置", value: formatCountdown(vm.weeklyResetTimestamp, now.value) },
+      ]
+    : [
+        { label: "已使用", value: formatNumber(vm.usedCount), tone: "primary" },
+        { label: "剩余", value: formatNumber(vm.remainingCount) },
+        { label: "总额度", value: formatNumber(vm.totalCount) },
+        { label: "重置时间", value: formatCountdown(vm.resetTimestamp, now.value) },
+      ];
+}
+
+const currentItems = computed(() => buildSummaryItems(query.vm.value));
+const weeklyItems = computed(() => buildSummaryItems(query.vm.value, true));
+</script>
+
+<template>
+  <div class="usage-page">
+    <section class="usage-hero">
+      <h1 class="page-title">查询 Token Plan 用量</h1>
+      <p class="page-lead">输入 MiniMax API Key，查看 Token Plan 已使用额度、剩余额度与模型明细。</p>
+    </section>
+
+    <ApiKeyForm
+      v-model="keyModel"
+      :loading="query.loading.value"
+      @submit="query.submit()"
+      @refresh="query.refresh()"
+    />
+
+    <StatusBanner
+      v-if="query.hasResult.value"
+      :loading="query.loading.value"
+      :status-label="query.statusLabel.value"
+      :time-window="timeWindow"
+      :ok="isOk"
+    />
+
+    <UsageSummarySection
+      title="当前窗口"
+      progress-label="当前窗口使用进度"
+      :progress-value="query.vm.value?.usedPercent"
+      :items="currentItems"
+    />
+
+    <UsageSummarySection
+      title="本周用量"
+      progress-label="本周使用进度"
+      :progress-value="query.vm.value?.weeklyUsedPercent"
+      :items="weeklyItems"
+    />
+
+    <ModelsList :models="query.vm.value?.models ?? []" />
+
+    <RawResponsePanel :raw="query.vm.value?.raw" :expanded="query.jsonExpanded.value" @toggle="query.toggleJson()" />
+  </div>
+</template>
+
+<style scoped>
+.usage-page {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.usage-hero {
+  display: grid;
+  gap: var(--space-4);
+}
+</style>
