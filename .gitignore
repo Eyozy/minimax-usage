@@ -6,3 +6,4 @@ dist/
 .output/
 .data/
 tests/*
+.DS_Store
