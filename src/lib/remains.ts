@@ -187,7 +187,7 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
       weeklyUsedCount,
       weeklyRemainingCount,
       weeklyUsedPercent: weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : 0,
-      models: models.map(buildModelCard),
+      models: models.filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0).map(buildModelCard),
     };
   }
 
@@ -220,7 +220,7 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
       typeof primaryModel.weekly_remains_time === "number"
         ? formatResetIn(primaryModel.weekly_remains_time)
         : "",
-    models: models.map(buildModelCard),
+    models: models.filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0).map(buildModelCard),
   };
 }
 
