@@ -4,7 +4,7 @@ import { formatCountdown } from "../utils/api";
 
 useSeoMeta({
   title: "查询 | MiniMax Token Plan 用量查询",
-  description: "输入 MiniMax API Key，查看 Token Plan 已使用额度、剩余额度与模型明细。",
+  description: "输入 Token Plan 专属 API Key，查看当前调用次数余量与各模型明细。",
 });
 
 const query = useUsageQuery();
@@ -48,7 +48,7 @@ const EMPTY_CURRENT = [
   { label: "已使用", value: "-", tone: "primary" as const },
   { label: "剩余", value: "-" },
   { label: "总额度", value: "-" },
-  { label: "重置时间", value: "-" },
+  { label: "窗口重置", value: "-" },
 ];
 
 const EMPTY_WEEKLY = [
@@ -74,7 +74,7 @@ function buildSummaryItems(vm: UsageViewModel | null, weekly = false): SummaryIt
         { label: "已使用", value: formatNumber(vm.usedCount), tone: "primary" },
         { label: "剩余", value: formatNumber(vm.remainingCount) },
         { label: "总额度", value: formatNumber(vm.totalCount) },
-        { label: "重置时间", value: formatCountdown(vm.resetTimestamp, now.value) },
+        { label: "窗口重置", value: formatCountdown(vm.resetTimestamp, now.value) },
       ];
 }
 
@@ -85,8 +85,8 @@ const weeklyItems = computed(() => buildSummaryItems(query.vm.value, true));
 <template>
   <div class="usage-page">
     <section class="usage-hero">
-      <h1 class="page-title">查询 Token Plan 用量</h1>
-      <p class="page-lead">输入 MiniMax API Key，查看 Token Plan 已使用额度、剩余额度与模型明细。</p>
+      <h1 class="page-title">Token Plan 用量查询</h1>
+      <p class="page-lead">输入 Token Plan 专属 API Key，查看当前调用次数余量与各模型明细。</p>
     </section>
 
     <ApiKeyForm
@@ -105,8 +105,8 @@ const weeklyItems = computed(() => buildSummaryItems(query.vm.value, true));
     />
 
     <UsageSummarySection
-      title="当前窗口"
-      progress-label="当前窗口使用进度"
+      title="当前窗口（5h）"
+      progress-label="当前窗口使用进度（5h）"
       :progress-value="query.vm.value?.usedPercent"
       :items="currentItems"
     />
@@ -120,7 +120,7 @@ const weeklyItems = computed(() => buildSummaryItems(query.vm.value, true));
 
     <ModelsList :models="query.vm.value?.models ?? []" />
 
-    <RawResponsePanel :raw="query.vm.value?.raw" :expanded="query.jsonExpanded.value" @toggle="query.toggleJson()" />
+    <RawResponsePanel v-if="query.hasResult.value" :raw="query.vm.value?.raw" :expanded="query.jsonExpanded.value" @toggle="query.toggleJson()" />
   </div>
 </template>
 

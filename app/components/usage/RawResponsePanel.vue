@@ -18,7 +18,7 @@ defineEmits<{
       aria-controls="raw-response-content"
       @click="$emit('toggle')"
     >
-      <span>原始响应数据</span>
+      <span>原始返回数据</span>
       <span>{{ expanded ? "收起" : "展开" }}</span>
     </button>
     <div v-show="expanded" id="raw-response-content" class="raw-content">
