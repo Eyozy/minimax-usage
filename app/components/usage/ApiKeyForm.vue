@@ -19,14 +19,14 @@ function handleSubmit() {
   <section class="surface-card form-card">
     <form class="form-grid" :aria-busy="loading ? 'true' : 'false'" @submit.prevent="handleSubmit">
       <div class="field-group">
-        <label class="field-label" for="api-key-input">MiniMax API Key</label>
+        <label class="field-label" for="api-key-input">Token Plan API Key</label>
         <div class="controls-row">
           <input
             id="api-key-input"
             class="field-input focus-ring"
             :value="modelValue"
             type="password"
-            placeholder="输入 MiniMax API Key"
+            placeholder="输入 Token Plan 专属 API Key"
             autocomplete="off"
             spellcheck="false"
             aria-describedby="api-key-hint"
@@ -39,7 +39,7 @@ function handleSubmit() {
           </button>
         </div>
         <p id="api-key-hint" class="field-hint">
-          API Key 仅保存在当前浏览器会话中。
+          Key 仅用于本次查询，关闭页面后自动清除。
         </p>
       </div>
     </form>

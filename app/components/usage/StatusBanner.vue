@@ -21,7 +21,7 @@ const toneClass = computed(() => {
       <span class="dot" aria-hidden="true"></span>
       <span>{{ loading ? "查询中" : statusLabel }}</span>
     </div>
-    <span class="status-time">{{ loading ? "正在拉取最新额度数据" : timeWindow }}</span>
+    <span class="status-time">{{ loading ? "正在查询最新用量数据" : timeWindow }}</span>
   </div>
 </template>
 

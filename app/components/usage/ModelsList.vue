@@ -16,11 +16,11 @@ const props = defineProps<{
         <p class="section-eyebrow">模型明细</p>
         <h2 id="models-title">模型用量明细</h2>
       </div>
-      <span class="models-badge">{{ models.length }} 个模型</span>
+      <span class="models-badge">{{ models.length }} 个可用模型</span>
     </div>
 
     <div v-if="!models.length" class="empty-state">
-      <p>提交 API Key 后，这里会展示各模型的已使用与剩余额度。</p>
+      <p>提交 API Key 后，这里会展示各模型的已用与剩余调用次数。</p>
       <p class="empty-hint">
         还没有 API Key？
         <a href="https://platform.minimaxi.com/" target="_blank" rel="noopener noreferrer">前往 MiniMax 开放平台获取</a>

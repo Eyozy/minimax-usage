@@ -3,12 +3,12 @@
     <div class="hero-copy">
       <h1 class="page-title">MiniMax Token Plan 用量查询</h1>
       <p class="page-lead">
-        实时查看已使用额度、剩余额度与各模型消耗明细。
+        输入 Token Plan API Key，实时查看剩余调用次数、已用额度与各模型明细。
       </p>
       <ul class="hero-points">
-        <li>支持当前窗口与本周额度双视角查看</li>
-        <li>模型级明细单独展开，便于定位消耗来源</li>
-        <li>原始响应可直接核对字段和状态</li>
+        <li>当前 5 小时窗口与本周额度双维度对比</li>
+        <li>按模型拆分调用次数，快速定位额度消耗来源</li>
+        <li>原始响应一键展开，随时核对接口返回数据</li>
       </ul>
       <div class="hero-actions">
         <NuxtLink class="action-btn primary focus-ring" to="/usage">开始查询</NuxtLink>
@@ -20,22 +20,22 @@
         <article class="panel-card">
           <span class="panel-kicker">查询范围</span>
           <strong>当前窗口额度</strong>
-          <p>即时查看已用、剩余额度与重置时间。</p>
+          <p>即时查看已用与剩余调用次数，以及 5 小时窗口重置倒计时。</p>
         </article>
         <article class="panel-card">
           <span class="panel-kicker">维度补充</span>
           <strong>本周额度</strong>
-          <p>周维度消耗一览，判断额度变化节奏。</p>
+          <p>查看本周累计消耗与剩余，掌握整体用量节奏。</p>
         </article>
         <article class="panel-card">
           <span class="panel-kicker">拆分查看</span>
           <strong>模型级明细</strong>
-          <p>按模型拆分用量，清晰定位消耗来源。</p>
+          <p>各模型调用次数单独列出，仅展示有配额的模型。</p>
         </article>
       </div>
       <div class="panel-note">
         <span class="panel-note-label">隐私边界</span>
-        <p>API Key 仅用于本次 Token Plan 查询，不留存。</p>
+        <p>API Key 仅在本次查询中使用，页面关闭后即失效，不上传不留存。</p>
       </div>
     </div>
   </section>

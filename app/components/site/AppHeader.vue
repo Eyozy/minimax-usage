@@ -3,7 +3,7 @@
     <div class="page-shell header-inner">
       <NuxtLink class="brand focus-ring" to="/">
         <BrandMark />
-        <span class="brand-text">Token Plan 用量查询</span>
+        <span class="brand-text">MiniMax Token Plan 用量查询</span>
       </NuxtLink>
       <button class="hamburger focus-ring" :class="{ active: menuOpen }" @click="menuOpen = !menuOpen" aria-label="切换菜单">
         <span></span>
