@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   title: string;
+  subtitle?: string;
   progressLabel: string;
   progressValue: number | null | undefined;
   items: Array<{ label: string; value: string; tone?: "default" | "primary" }>;
@@ -10,7 +11,9 @@ const props = defineProps<{
 <template>
   <section class="summary-section">
     <div class="summary-header">
-      <p class="section-eyebrow">{{ title }}</p>
+      <p class="section-eyebrow">
+        {{ title }}<span v-if="subtitle" class="section-subtitle"> · {{ subtitle }}</span>
+      </p>
     </div>
     <div class="summary-grid">
       <MetricCard
@@ -33,6 +36,11 @@ const props = defineProps<{
 
 .summary-header {
   margin-top: var(--space-2);
+}
+
+.section-subtitle {
+  color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .summary-grid {

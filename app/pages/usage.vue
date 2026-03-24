@@ -106,13 +106,16 @@ const weeklyItems = computed(() => buildSummaryItems(query.vm.value, true));
 
     <UsageSummarySection
       title="当前窗口（5h）"
+      :subtitle="query.vm.value?.primaryModelName"
       progress-label="当前窗口使用进度（5h）"
       :progress-value="query.vm.value?.usedPercent"
       :items="currentItems"
     />
 
     <UsageSummarySection
+      v-if="query.vm.value?.weeklyTotalCount !== null"
       title="本周用量"
+      :subtitle="query.vm.value?.primaryModelName"
       progress-label="本周使用进度"
       :progress-value="query.vm.value?.weeklyUsedPercent"
       :items="weeklyItems"

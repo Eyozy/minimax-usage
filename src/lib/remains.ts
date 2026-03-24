@@ -40,6 +40,7 @@ export type RemainsResponse = {
 type FetchLike = typeof fetch;
 
 const emptyUsageViewModel = {
+  primaryModelName: "",
   timeWindow: "",
   resetInLabel: "",
   resetTimestamp: null,
@@ -172,6 +173,8 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
   const weeklyTotalCount = primaryModel.current_weekly_total_count ?? 0;
   const weeklyRemainingCount = primaryModel.current_weekly_usage_count ?? 0;
   const weeklyUsedCount = Math.max(weeklyTotalCount - weeklyRemainingCount, 0);
+  const hasWeeklyQuota = weeklyTotalCount > 0 || weeklyRemainingCount > 0;
+  const primaryModelName = primaryModel.model_name ?? "";
 
   if (typeof primaryModel.start_time !== "number" || typeof primaryModel.end_time !== "number") {
     return {
@@ -179,14 +182,15 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
       statusLabel: payload?.base_resp?.status_msg ?? result.summary,
       raw: result.raw,
       ...emptyUsageViewModel,
+      primaryModelName,
       totalCount,
       remainingCount,
       usedCount,
       usedPercent: totalCount > 0 ? Math.round((usedCount / totalCount) * 100) : 0,
-      weeklyTotalCount,
-      weeklyUsedCount,
-      weeklyRemainingCount,
-      weeklyUsedPercent: weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : 0,
+      weeklyTotalCount: hasWeeklyQuota ? weeklyTotalCount : null,
+      weeklyUsedCount: hasWeeklyQuota ? weeklyUsedCount : null,
+      weeklyRemainingCount: hasWeeklyQuota ? weeklyRemainingCount : null,
+      weeklyUsedPercent: hasWeeklyQuota && weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : null,
       models: models.filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0).map(buildModelCard),
     };
   }
@@ -195,6 +199,7 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
     ok: result.ok,
     statusLabel: payload?.base_resp?.status_msg ?? result.summary,
     raw: result.raw,
+    primaryModelName,
     timeWindow: `${formatDateTime(primaryModel.start_time)} ~ ${formatTime(primaryModel.end_time)} (UTC+8)`,
     resetInLabel:
       typeof primaryModel.remains_time === "number"
@@ -208,16 +213,16 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
     remainingCount,
     usedCount,
     usedPercent: totalCount > 0 ? Math.round((usedCount / totalCount) * 100) : 0,
-    weeklyTotalCount,
-    weeklyUsedCount,
-    weeklyRemainingCount,
-    weeklyUsedPercent: weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : 0,
+    weeklyTotalCount: hasWeeklyQuota ? weeklyTotalCount : null,
+    weeklyUsedCount: hasWeeklyQuota ? weeklyUsedCount : null,
+    weeklyRemainingCount: hasWeeklyQuota ? weeklyRemainingCount : null,
+    weeklyUsedPercent: hasWeeklyQuota && weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : null,
     weeklyResetTimestamp:
-      typeof primaryModel.weekly_remains_time === "number"
+      hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
         ? Date.now() + primaryModel.weekly_remains_time
         : null,
     weeklyResetInLabel:
-      typeof primaryModel.weekly_remains_time === "number"
+      hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
         ? formatResetIn(primaryModel.weekly_remains_time)
         : "",
     models: models.filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0).map(buildModelCard),

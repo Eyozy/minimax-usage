@@ -1,6 +1,7 @@
 export type UsageViewModel = {
   ok: boolean;
   statusLabel: string;
+  primaryModelName: string;
   timeWindow: string;
   resetInLabel: string;
   resetTimestamp: number | null;
