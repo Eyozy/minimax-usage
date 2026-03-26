@@ -38,7 +38,7 @@ const items = [
 
 .feature-card h2 {
   margin: 0 0 var(--space-2);
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
 }
 
 .feature-card p {

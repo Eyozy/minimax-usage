@@ -60,7 +60,7 @@ const props = defineProps<{
 
 .models-header h2 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
 .models-badge {

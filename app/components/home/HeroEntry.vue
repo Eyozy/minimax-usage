@@ -155,7 +155,7 @@
 }
 
 .panel-item strong {
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 2vw, 1.05rem);
 }
 
 .panel-item p,

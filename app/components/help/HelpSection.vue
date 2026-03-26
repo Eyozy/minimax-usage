@@ -21,7 +21,7 @@ defineProps<{
 
 .help-section h2 {
   margin: 0 0 var(--space-3);
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2vw, 1.1rem);
 }
 
 .help-section ul {
