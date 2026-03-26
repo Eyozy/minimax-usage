@@ -20,9 +20,9 @@ const props = defineProps<{
     </div>
 
     <div v-if="!models.length" class="empty-state">
-      <p>提交 API Key 后，这里会展示各模型的已用与剩余调用次数。</p>
+      <p>查询后，各模型的调用次数明细会显示在这里。</p>
       <p class="empty-hint">
-        还没有 API Key？
+        没有 API Key？
         <a href="https://platform.minimaxi.com/" target="_blank" rel="noopener noreferrer">前往 MiniMax 开放平台获取</a>
       </p>
     </div>

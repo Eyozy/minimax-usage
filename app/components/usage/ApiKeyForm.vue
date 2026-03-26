@@ -23,7 +23,7 @@ const emit = defineEmits<{
             class="field-input focus-ring"
             :value="modelValue"
             type="password"
-            placeholder="输入 Token Plan 专属 API Key"
+            placeholder="Token Plan API Key"
             autocomplete="off"
             spellcheck="false"
             aria-describedby="api-key-hint"
@@ -37,7 +37,7 @@ const emit = defineEmits<{
           </button>
         </div>
         <p id="api-key-hint" class="field-hint">
-          Key 仅用于本次查询，关闭页面后自动清除。
+          API Key 仅用于本次查询，关闭页面即清除。
         </p>
       </div>
     </form>

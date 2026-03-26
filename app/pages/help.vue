@@ -26,8 +26,8 @@ const sections = [
   {
     title: "常见问题",
     body: [
-      "API Key 无效？请确认凭证完整复制，前后无多余空格。",
-      "请求超时？先重试，再检查网络与接口可达性。",
+      "API Key 无效？确认已完整复制，前后没有多余空格。",
+      "请求超时？先重试，再检查网络连接是否正常。",
       "数据显示异常？展开接口原始响应核对真实字段。",
     ],
   },
@@ -45,8 +45,8 @@ const sections = [
 <template>
   <div class="help-page">
     <section class="help-hero">
-      <h1 class="page-title">使用帮助</h1>
-      <p class="page-lead">API Key 获取、字段说明、常见问题与隐私声明。</p>
+      <h1 class="page-title">帮助</h1>
+      <p class="page-lead">包含 API Key 获取、字段说明、常见问题与隐私说明。</p>
     </section>
 
     <div class="help-grid">
@@ -56,8 +56,7 @@ const sections = [
     <section class="feedback-card">
       <div class="feedback-copy">
         <p class="feedback-eyebrow">反馈问题</p>
-        <h2 class="feedback-title">遇到 Bug 或想提建议，直接去 GitHub 提 Issue</h2>
-        <p class="feedback-text">如果你发现查询异常、页面显示问题，或者希望补充功能，可以直接到仓库提交 Issue。</p>
+        <h2 class="feedback-title">遇到问题或有建议，欢迎去 GitHub 提 Issue</h2>
       </div>
 
       <a

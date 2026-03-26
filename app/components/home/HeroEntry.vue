@@ -1,7 +1,7 @@
 <template>
   <section class="hero surface-card">
     <div class="hero-copy">
-      <h1 class="page-title">MiniMax Token Plan 用量查询</h1>
+      <h1 class="page-title">实时查看 MiniMax Token Plan 用量</h1>
       <p class="page-lead">
         输入 Token Plan API Key，实时查看剩余调用次数、已用额度与各模型明细。
       </p>
@@ -23,7 +23,7 @@
           <p>即时查看已用与剩余调用次数，以及 5 小时窗口重置倒计时。</p>
         </article>
         <article class="panel-item">
-          <span class="panel-kicker">维度补充</span>
+          <span class="panel-kicker">周级视角</span>
           <strong>本周额度</strong>
           <p>查看本周累计消耗与剩余，掌握整体用量节奏。</p>
         </article>

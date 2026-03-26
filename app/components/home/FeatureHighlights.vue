@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const items = [
   {
-    title: "移动端适配",
+    title: "随时随地查",
     body: "手机端自动切换卡片布局，信息清晰不堆叠。",
   },
   {
