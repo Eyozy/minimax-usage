@@ -52,6 +52,17 @@ const toneClass = computed(() => {
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.warning .dot {
+  background: var(--color-warning);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
 }
 
 .success {

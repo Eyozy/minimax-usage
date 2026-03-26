@@ -24,7 +24,7 @@ const props = defineProps<{
         :tone="item.tone"
       />
     </div>
-    <UsageProgress :label="progressLabel" :value="progressValue" />
+    <UsageProgress v-if="progressValue != null" :label="progressLabel" :value="progressValue" />
   </section>
 </template>
 

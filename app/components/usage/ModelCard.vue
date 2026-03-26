@@ -62,7 +62,7 @@ defineProps<{
   gap: var(--space-4);
   padding: 0.65rem 0.8rem;
   border-radius: var(--radius-md);
-  background: #eef2f7;
+  background: var(--color-surface-muted);
   font-size: 0.9375rem;
 }
 

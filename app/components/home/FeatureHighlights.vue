@@ -47,7 +47,13 @@ const items = [
   line-height: 1.7;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 960px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
   .feature-grid {
     grid-template-columns: 1fr;
   }

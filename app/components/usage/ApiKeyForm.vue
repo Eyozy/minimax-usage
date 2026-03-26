@@ -28,6 +28,7 @@ const emit = defineEmits<{
             spellcheck="false"
             aria-describedby="api-key-hint"
             required
+            :disabled="loading"
             @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
           />
           <button class="button-primary focus-ring action-button primary-action" type="submit" :disabled="loading">查询用量</button>
@@ -75,6 +76,16 @@ const emit = defineEmits<{
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: #fff;
+  transition: border-color 150ms ease;
+}
+
+.field-input:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.field-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .field-hint {

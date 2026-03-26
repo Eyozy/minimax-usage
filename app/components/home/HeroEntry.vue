@@ -17,17 +17,17 @@
     </div>
     <div class="hero-panel" aria-label="工具摘要">
       <div class="panel-grid">
-        <article class="panel-card">
+        <article class="panel-item">
           <span class="panel-kicker">查询范围</span>
           <strong>当前窗口额度</strong>
           <p>即时查看已用与剩余调用次数，以及 5 小时窗口重置倒计时。</p>
         </article>
-        <article class="panel-card">
+        <article class="panel-item">
           <span class="panel-kicker">维度补充</span>
           <strong>本周额度</strong>
           <p>查看本周累计消耗与剩余，掌握整体用量节奏。</p>
         </article>
-        <article class="panel-card">
+        <article class="panel-item">
           <span class="panel-kicker">拆分查看</span>
           <strong>模型级明细</strong>
           <p>各模型调用次数单独列出，仅展示有配额的模型。</p>
@@ -132,16 +132,18 @@
 
 .panel-grid {
   display: grid;
-  gap: var(--space-3);
+  gap: 0;
 }
 
-.panel-card {
+.panel-item {
   display: grid;
   gap: var(--space-2);
   padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid var(--color-border-muted);
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.panel-item:last-child {
+  border-bottom: none;
 }
 
 .panel-kicker {
@@ -152,11 +154,11 @@
   text-transform: uppercase;
 }
 
-.panel-card strong {
+.panel-item strong {
   font-size: 1.05rem;
 }
 
-.panel-card p,
+.panel-item p,
 .panel-note p {
   margin: 0;
   color: var(--color-text-secondary);

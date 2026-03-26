@@ -29,6 +29,7 @@ defineProps<{
   align-items: center;
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--color-border-muted);
+  transition: background-color 150ms ease;
 }
 
 .model-row:hover {

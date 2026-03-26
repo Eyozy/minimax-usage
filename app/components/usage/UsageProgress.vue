@@ -51,12 +51,13 @@ const textValue = computed(() => `${(props.value ?? 0).toFixed(1)}%`);
   overflow: hidden;
   height: 0.75rem;
   border-radius: 999px;
-  background: #e5e7eb;
+  background: var(--color-border-muted);
 }
 
 .progress-fill {
   height: 100%;
   border-radius: 999px;
   background: var(--color-primary);
+  transition: width 600ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 </style>

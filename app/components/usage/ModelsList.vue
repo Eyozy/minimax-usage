@@ -67,7 +67,7 @@ const props = defineProps<{
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
   background: var(--color-brand-soft);
-  color: #9f1239;
+  color: var(--color-brand);
   font-size: 0.8rem;
   font-weight: 700;
 }

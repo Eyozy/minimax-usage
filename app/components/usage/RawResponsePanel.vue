@@ -19,7 +19,12 @@ defineEmits<{
       @click="$emit('toggle')"
     >
       <span>原始返回数据</span>
-      <span>{{ expanded ? "收起" : "展开" }}</span>
+      <span class="toggle-right">
+        <span>{{ expanded ? "收起" : "展开" }}</span>
+        <svg class="toggle-chevron" :class="{ rotated: expanded }" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </span>
     </button>
     <div v-show="expanded" id="raw-response-content" class="raw-content">
       <pre>{{ JSON.stringify(raw ?? {}, null, 2) }}</pre>
@@ -43,6 +48,31 @@ defineEmits<{
   background: transparent;
   font-weight: 700;
   text-align: left;
+  transition: background-color 150ms ease;
+}
+
+.raw-toggle:hover {
+  background: var(--color-surface-muted);
+}
+
+.toggle-right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.toggle-chevron {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle-chevron.rotated {
+  transform: rotate(180deg);
 }
 
 .raw-content {
