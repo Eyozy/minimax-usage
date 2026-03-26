@@ -10,14 +10,11 @@ const emit = defineEmits<{
   refresh: [];
 }>();
 
-function handleSubmit() {
-  emit("submit");
-}
 </script>
 
 <template>
   <section class="surface-card form-card">
-    <form class="form-grid" :aria-busy="loading ? 'true' : 'false'" @submit.prevent="handleSubmit">
+    <form class="form-grid" :aria-busy="loading ? 'true' : 'false'" @submit.prevent="$emit('submit')">
       <div class="field-group">
         <label class="field-label" for="api-key-input">Token Plan API Key</label>
         <div class="controls-row">

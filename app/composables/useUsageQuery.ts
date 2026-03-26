@@ -35,12 +35,7 @@ export function useUsageQuery() {
 
   function saveApiKey(value: string) {
     apiKey.value = value;
-
-    if (!import.meta.client) {
-      return;
-    }
-
-    window.sessionStorage.setItem("minimax_api_key", value);
+    if (import.meta.client) sessionStorage.setItem("minimax_api_key", value);
   }
 
   async function runQuery(nextKey?: string) {
@@ -76,11 +71,7 @@ export function useUsageQuery() {
 
   if (import.meta.client) {
     onMounted(() => {
-      const storedKey = window.sessionStorage.getItem("minimax_api_key");
-
-      if (storedKey) {
-        apiKey.value = storedKey;
-      }
+      apiKey.value = sessionStorage.getItem("minimax_api_key") ?? "";
     });
   }
 

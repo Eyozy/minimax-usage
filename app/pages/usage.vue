@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UsageViewModel } from "../../shared/usage";
-import { formatCountdown } from "../utils/api";
+import { formatCountdown, formatNumber } from "../utils/api";
 
 useSeoMeta({
   title: "查询 | MiniMax Token Plan 用量查询",
@@ -20,66 +20,35 @@ const isOk = computed(() => query.vm.value?.ok ?? false);
 const now = ref(Date.now());
 let countdownTimer: number | null = null;
 
-function formatNumber(value: number | null | undefined) {
-  if (value === null || value === undefined) {
-    return "-";
-  }
-
-  return value.toLocaleString("zh-CN");
-}
-
 onMounted(() => {
-  countdownTimer = window.setInterval(() => {
-    now.value = Date.now();
-  }, 1000);
+  countdownTimer = window.setInterval(() => { now.value = Date.now(); }, 1000);
 });
 
 onBeforeUnmount(() => {
-  if (!countdownTimer) {
-    return;
-  }
-
-  window.clearInterval(countdownTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
 });
 
 type SummaryItem = { label: string; value: string; tone?: "default" | "primary" };
 
-const EMPTY_CURRENT = [
-  { label: "已使用", value: "-", tone: "primary" as const },
-  { label: "剩余", value: "-" },
-  { label: "总额度", value: "-" },
-  { label: "窗口重置", value: "-" },
-];
+const currentItems = computed((): SummaryItem[] => {
+  const vm = query.vm.value;
+  return [
+    { label: "已使用", value: formatNumber(vm?.usedCount), tone: "primary" },
+    { label: "剩余", value: formatNumber(vm?.remainingCount) },
+    { label: "总额度", value: formatNumber(vm?.totalCount) },
+    { label: "窗口重置", value: formatCountdown(vm?.resetTimestamp ?? null, now.value) },
+  ];
+});
 
-const EMPTY_WEEKLY = [
-  { label: "本周已使用", value: "-", tone: "default" as const },
-  { label: "本周剩余", value: "-" },
-  { label: "本周总额度", value: "-" },
-  { label: "本周重置", value: "-" },
-];
-
-function buildSummaryItems(vm: UsageViewModel | null, weekly = false): SummaryItem[] {
-  if (!vm) {
-    return weekly ? EMPTY_WEEKLY : EMPTY_CURRENT;
-  }
-
-  return weekly
-    ? [
-        { label: "本周已使用", value: formatNumber(vm.weeklyUsedCount) },
-        { label: "本周剩余", value: formatNumber(vm.weeklyRemainingCount) },
-        { label: "本周总额度", value: formatNumber(vm.weeklyTotalCount) },
-        { label: "本周重置", value: formatCountdown(vm.weeklyResetTimestamp, now.value) },
-      ]
-    : [
-        { label: "已使用", value: formatNumber(vm.usedCount), tone: "primary" },
-        { label: "剩余", value: formatNumber(vm.remainingCount) },
-        { label: "总额度", value: formatNumber(vm.totalCount) },
-        { label: "窗口重置", value: formatCountdown(vm.resetTimestamp, now.value) },
-      ];
-}
-
-const currentItems = computed(() => buildSummaryItems(query.vm.value));
-const weeklyItems = computed(() => buildSummaryItems(query.vm.value, true));
+const weeklyItems = computed((): SummaryItem[] => {
+  const vm = query.vm.value;
+  return [
+    { label: "本周已使用", value: formatNumber(vm?.weeklyUsedCount) },
+    { label: "本周剩余", value: formatNumber(vm?.weeklyRemainingCount) },
+    { label: "本周总额度", value: formatNumber(vm?.weeklyTotalCount) },
+    { label: "本周重置", value: formatCountdown(vm?.weeklyResetTimestamp ?? null, now.value) },
+  ];
+});
 </script>
 
 <template>

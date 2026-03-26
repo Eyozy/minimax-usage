@@ -11,9 +11,8 @@ type ErrorPayload = {
   message?: unknown;
 };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
 export function resolveApiBase(options: ResolveApiBaseOptions = {}) {
   const explicitBase = options.apiBase?.trim();
@@ -80,6 +79,8 @@ export function readRequestError(cause: unknown) {
 
   return "请求失败，请稍后重试";
 }
+
+export const formatNumber = (v: number | null | undefined) => v?.toLocaleString("zh-CN") ?? "-";
 
 export function formatCountdown(targetTimestamp: number | null, now = Date.now()) {
   if (!targetTimestamp) {

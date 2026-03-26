@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatNumber } from "../../utils/api";
+
 defineProps<{
   model: {
     name: string;
@@ -8,9 +10,6 @@ defineProps<{
   };
 }>();
 
-function formatNumber(value: number) {
-  return value.toLocaleString("zh-CN");
-}
 </script>
 
 <template>

@@ -95,34 +95,17 @@ function formatResetIn(milliseconds: number) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-function readStatus(response: MiniMaxRawPayload) {
-  return {
-    statusCode: response.status_code ?? response.base_resp?.status_code ?? null,
-    statusMessage: response.status_msg ?? response.base_resp?.status_msg ?? null,
-  };
-}
-
 function buildModelCard(model: ModelRemain) {
   const totalCount = model.current_interval_total_count ?? 0;
   const remainingCount = model.current_interval_usage_count ?? 0;
-  const usedCount = Math.max(totalCount - remainingCount, 0);
-
-  if (typeof model.start_time !== "number" || typeof model.end_time !== "number") {
-    return {
-      name: model.model_name ?? "Unknown Model",
-      timeWindow: "",
-      totalCount,
-      remainingCount,
-      usedCount,
-    };
-  }
-
   return {
     name: model.model_name ?? "Unknown Model",
-    timeWindow: `${formatTime(model.start_time)} ~ ${formatTime(model.end_time)}`,
+    timeWindow: typeof model.start_time === "number" && typeof model.end_time === "number"
+      ? `${formatTime(model.start_time)} ~ ${formatTime(model.end_time)}`
+      : "",
     totalCount,
     remainingCount,
-    usedCount,
+    usedCount: Math.max(totalCount - remainingCount, 0),
   };
 }
 
@@ -155,15 +138,11 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
   const payload = (result.raw ?? null) as MiniMaxRawPayload | null;
   const models = Array.isArray(payload?.model_remains) ? payload.model_remains : [];
   const primaryModel = models[0];
+  const statusLabel = payload?.base_resp?.status_msg ?? result.summary;
 
   if (!primaryModel) {
     return result.ok
-      ? {
-          ok: result.ok,
-          statusLabel: payload?.base_resp?.status_msg ?? result.summary,
-          raw: result.raw,
-          ...emptyUsageViewModel,
-        }
+      ? { ok: true, statusLabel, raw: result.raw, ...emptyUsageViewModel }
       : buildErrorViewModel(result.summary, result.raw);
   }
 
@@ -174,41 +153,21 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
   const weeklyRemainingCount = primaryModel.current_weekly_usage_count ?? 0;
   const weeklyUsedCount = Math.max(weeklyTotalCount - weeklyRemainingCount, 0);
   const hasWeeklyQuota = weeklyTotalCount > 0 || weeklyRemainingCount > 0;
-  const primaryModelName = primaryModel.model_name ?? "";
-
-  if (typeof primaryModel.start_time !== "number" || typeof primaryModel.end_time !== "number") {
-    return {
-      ok: result.ok,
-      statusLabel: payload?.base_resp?.status_msg ?? result.summary,
-      raw: result.raw,
-      ...emptyUsageViewModel,
-      primaryModelName,
-      totalCount,
-      remainingCount,
-      usedCount,
-      usedPercent: totalCount > 0 ? Math.round((usedCount / totalCount) * 100) : 0,
-      weeklyTotalCount: hasWeeklyQuota ? weeklyTotalCount : null,
-      weeklyUsedCount: hasWeeklyQuota ? weeklyUsedCount : null,
-      weeklyRemainingCount: hasWeeklyQuota ? weeklyRemainingCount : null,
-      weeklyUsedPercent: hasWeeklyQuota && weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : null,
-      models: models.filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0).map(buildModelCard),
-    };
-  }
+  const hasTimeWindow = typeof primaryModel.start_time === "number" && typeof primaryModel.end_time === "number";
+  const filteredModels = models
+    .filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0)
+    .map(buildModelCard);
 
   return {
     ok: result.ok,
-    statusLabel: payload?.base_resp?.status_msg ?? result.summary,
+    statusLabel,
     raw: result.raw,
-    primaryModelName,
-    timeWindow: `${formatDateTime(primaryModel.start_time)} ~ ${formatTime(primaryModel.end_time)} (UTC+8)`,
-    resetInLabel:
-      typeof primaryModel.remains_time === "number"
-        ? formatResetIn(primaryModel.remains_time)
-        : "",
-    resetTimestamp:
-      typeof primaryModel.remains_time === "number"
-        ? Date.now() + primaryModel.remains_time
-        : null,
+    primaryModelName: primaryModel.model_name ?? "",
+    timeWindow: hasTimeWindow
+      ? `${formatDateTime(primaryModel.start_time!)} ~ ${formatTime(primaryModel.end_time!)} (UTC+8)`
+      : "",
+    resetInLabel: typeof primaryModel.remains_time === "number" ? formatResetIn(primaryModel.remains_time) : "",
+    resetTimestamp: typeof primaryModel.remains_time === "number" ? Date.now() + primaryModel.remains_time : null,
     totalCount,
     remainingCount,
     usedCount,
@@ -217,15 +176,13 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
     weeklyUsedCount: hasWeeklyQuota ? weeklyUsedCount : null,
     weeklyRemainingCount: hasWeeklyQuota ? weeklyRemainingCount : null,
     weeklyUsedPercent: hasWeeklyQuota && weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : null,
-    weeklyResetTimestamp:
-      hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
-        ? Date.now() + primaryModel.weekly_remains_time
-        : null,
-    weeklyResetInLabel:
-      hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
-        ? formatResetIn(primaryModel.weekly_remains_time)
-        : "",
-    models: models.filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0).map(buildModelCard),
+    weeklyResetTimestamp: hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
+      ? Date.now() + primaryModel.weekly_remains_time
+      : null,
+    weeklyResetInLabel: hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
+      ? formatResetIn(primaryModel.weekly_remains_time)
+      : "",
+    models: filteredModels,
   };
 }
 
@@ -244,7 +201,8 @@ export async function fetchRemains(apiKey: string, fetchImpl: FetchLike = fetch)
     });
 
     const payload = (await response.json()) as MiniMaxRawPayload;
-    const { statusCode, statusMessage } = readStatus(payload);
+    const statusCode = payload.status_code ?? payload.base_resp?.status_code ?? null;
+    const statusMessage = payload.status_msg ?? payload.base_resp?.status_msg ?? null;
 
     if (statusCode === 0) {
       return { ok: true, statusCode, summary: "查询成功", raw: payload };
