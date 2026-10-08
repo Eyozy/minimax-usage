@@ -1,7 +1,7 @@
 import type { UsageViewModel } from "../../shared/usage.js";
 
 const REMAINS_ENDPOINT =
-  "https://www.minimaxi.com/v1/api/openplatform/coding_plan/remains";
+  "https://www.minimax.cn/v1/token_plan/remains";
 
 type ModelRemain = {
   start_time?: number;
@@ -9,9 +9,15 @@ type ModelRemain = {
   remains_time?: number;
   current_interval_total_count?: number;
   current_interval_usage_count?: number;
+  current_interval_remaining_percent?: number;
+  current_interval_status?: number;
   model_name?: string;
   current_weekly_total_count?: number;
   current_weekly_usage_count?: number;
+  current_weekly_remaining_percent?: number;
+  current_weekly_status?: number;
+  weekly_start_time?: number;
+  weekly_end_time?: number;
   weekly_remains_time?: number;
 };
 
@@ -48,10 +54,14 @@ const emptyUsageViewModel = {
   remainingCount: null,
   usedCount: null,
   usedPercent: null,
+  remainingPercent: null,
+  intervalStatus: null,
   weeklyTotalCount: null,
   weeklyUsedCount: null,
   weeklyRemainingCount: null,
   weeklyUsedPercent: null,
+  weeklyRemainingPercent: null,
+  weeklyStatus: null,
   weeklyResetTimestamp: null,
   weeklyResetInLabel: "",
   models: [],
@@ -95,18 +105,9 @@ function formatResetIn(milliseconds: number) {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-function buildModelCard(model: ModelRemain) {
-  const totalCount = model.current_interval_total_count ?? 0;
-  const remainingCount = model.current_interval_usage_count ?? 0;
-  return {
-    name: model.model_name ?? "Unknown Model",
-    timeWindow: typeof model.start_time === "number" && typeof model.end_time === "number"
-      ? `${formatTime(model.start_time)} ~ ${formatTime(model.end_time)}`
-      : "",
-    totalCount,
-    remainingCount,
-    usedCount: Math.max(totalCount - remainingCount, 0),
-  };
+function buildModelItem(model: ModelRemain) {
+  const name = model.model_name === "general" ? "General (M Plan 通用共享池)" : (model.model_name ?? "Unknown Model");
+  return { name };
 }
 
 export function validateApiKey(apiKey: string) {
@@ -146,23 +147,59 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
       : buildErrorViewModel(result.summary, result.raw);
   }
 
-  const totalCount = primaryModel.current_interval_total_count ?? 0;
-  const remainingCount = primaryModel.current_interval_usage_count ?? 0;
-  const usedCount = Math.max(totalCount - remainingCount, 0);
-  const weeklyTotalCount = primaryModel.current_weekly_total_count ?? 0;
-  const weeklyRemainingCount = primaryModel.current_weekly_usage_count ?? 0;
-  const weeklyUsedCount = Math.max(weeklyTotalCount - weeklyRemainingCount, 0);
-  const hasWeeklyQuota = weeklyTotalCount > 0 || weeklyRemainingCount > 0;
-  const hasTimeWindow = typeof primaryModel.start_time === "number" && typeof primaryModel.end_time === "number";
-  const filteredModels = models
-    .filter(m => m.current_interval_total_count !== 0 || m.current_interval_usage_count !== 0)
-    .map(buildModelCard);
+  const rawTotal = primaryModel.current_interval_total_count ?? 0;
+  const rawRemaining = primaryModel.current_interval_usage_count ?? 0;
+  const hasCountQuota = rawTotal > 0;
+  const totalCount = hasCountQuota ? rawTotal : null;
+  const remainingCount = hasCountQuota ? rawRemaining : null;
+  const usedCount = hasCountQuota ? Math.max(rawTotal - rawRemaining, 0) : null;
+
+  const rawRemainingPercent = primaryModel.current_interval_remaining_percent ?? null;
+  let usedPercent: number | null = null;
+  let remainingPercent: number | null = null;
+
+  if (rawRemainingPercent != null) {
+    remainingPercent = rawRemainingPercent;
+    usedPercent = Math.max(100 - rawRemainingPercent, 0);
+  } else if (hasCountQuota && totalCount! > 0) {
+    usedPercent = Math.round((usedCount! / totalCount!) * 100);
+    remainingPercent = Math.max(100 - usedPercent, 0);
+  }
+
+  const rawWeeklyTotal = primaryModel.current_weekly_total_count ?? 0;
+  const rawWeeklyRemaining = primaryModel.current_weekly_usage_count ?? 0;
+  const hasWeeklyCount = rawWeeklyTotal > 0;
+  const weeklyTotalCount = hasWeeklyCount ? rawWeeklyTotal : null;
+  const weeklyRemainingCount = hasWeeklyCount ? rawWeeklyRemaining : null;
+  const weeklyUsedCount = hasWeeklyCount ? Math.max(rawWeeklyTotal - rawWeeklyRemaining, 0) : null;
+
+  const rawWeeklyRemainingPercent = primaryModel.current_weekly_remaining_percent ?? null;
+  let weeklyUsedPercent: number | null = null;
+  let weeklyRemainingPercent: number | null = null;
+
+  if (rawWeeklyRemainingPercent != null) {
+    weeklyRemainingPercent = rawWeeklyRemainingPercent;
+    weeklyUsedPercent = Math.max(100 - rawWeeklyRemainingPercent, 0);
+  } else if (hasWeeklyCount && weeklyTotalCount! > 0) {
+    weeklyUsedPercent = Math.round((weeklyUsedCount! / weeklyTotalCount!) * 100);
+    weeklyRemainingPercent = Math.max(100 - weeklyUsedPercent, 0);
+  }
+
+  const hasWeeklyQuota =
+    hasWeeklyCount ||
+    weeklyRemainingPercent != null ||
+    typeof primaryModel.weekly_remains_time === "number";
+
+  const hasTimeWindow =
+    typeof primaryModel.start_time === "number" && typeof primaryModel.end_time === "number";
+
+  const mappedModels = models.map(buildModelItem);
 
   return {
     ok: result.ok,
     statusLabel,
     raw: result.raw,
-    primaryModelName: primaryModel.model_name ?? "",
+    primaryModelName: primaryModel.model_name === "general" ? "General (M Plan 统一共享池)" : (primaryModel.model_name ?? ""),
     timeWindow: hasTimeWindow
       ? `${formatDateTime(primaryModel.start_time!)} ~ ${formatTime(primaryModel.end_time!)} (UTC+8)`
       : "",
@@ -171,18 +208,22 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
     totalCount,
     remainingCount,
     usedCount,
-    usedPercent: totalCount > 0 ? Math.round((usedCount / totalCount) * 100) : 0,
-    weeklyTotalCount: hasWeeklyQuota ? weeklyTotalCount : null,
-    weeklyUsedCount: hasWeeklyQuota ? weeklyUsedCount : null,
-    weeklyRemainingCount: hasWeeklyQuota ? weeklyRemainingCount : null,
-    weeklyUsedPercent: hasWeeklyQuota && weeklyTotalCount > 0 ? Math.round((weeklyUsedCount / weeklyTotalCount) * 100) : null,
+    usedPercent,
+    remainingPercent,
+    intervalStatus: primaryModel.current_interval_status ?? null,
+    weeklyTotalCount,
+    weeklyUsedCount,
+    weeklyRemainingCount,
+    weeklyUsedPercent,
+    weeklyRemainingPercent,
+    weeklyStatus: primaryModel.current_weekly_status ?? null,
     weeklyResetTimestamp: hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
       ? Date.now() + primaryModel.weekly_remains_time
       : null,
     weeklyResetInLabel: hasWeeklyQuota && typeof primaryModel.weekly_remains_time === "number"
       ? formatResetIn(primaryModel.weekly_remains_time)
       : "",
-    models: filteredModels,
+    models: mappedModels,
   };
 }
 
@@ -209,7 +250,7 @@ export async function fetchRemains(apiKey: string, fetchImpl: FetchLike = fetch)
     }
 
     if (statusCode === 1004) {
-      return { ok: false, statusCode, summary: "请检查 API Key 是否正确", raw: payload };
+      return { ok: false, statusCode, summary: "API Key 鉴权失败：请确认 Key 有效，且属于国内开放平台订阅（非海外版）", raw: payload };
     }
 
     return {

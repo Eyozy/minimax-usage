@@ -9,18 +9,23 @@ export type UsageViewModel = {
   remainingCount: number | null;
   usedCount: number | null;
   usedPercent: number | null;
+  remainingPercent: number | null;
+  intervalStatus: number | null;
   weeklyTotalCount: number | null;
   weeklyUsedCount: number | null;
   weeklyRemainingCount: number | null;
   weeklyUsedPercent: number | null;
+  weeklyRemainingPercent: number | null;
+  weeklyStatus: number | null;
   weeklyResetTimestamp: number | null;
   weeklyResetInLabel: string;
   models: Array<{
     name: string;
-    timeWindow: string;
-    totalCount: number;
-    remainingCount: number;
-    usedCount: number;
+    timeWindow?: string;
+    totalCount?: number;
+    remainingCount?: number;
+    usedCount?: number;
+    tag?: string;
   }>;
   raw: unknown;
 };

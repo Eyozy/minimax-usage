@@ -4,6 +4,7 @@ import {
   readUsageErrorPayload,
   resolveRemainsEndpoint,
 } from "../utils/api";
+import { handleRemainsRequest } from "../../src/lib/remains";
 
 type QueryState = "idle" | "loading" | "success" | "error";
 
@@ -59,6 +60,19 @@ export function useUsageQuery() {
       state.value = response.ok ? "success" : "error";
       error.value = response.ok ? null : response.statusLabel;
     } catch (cause) {
+      // 本地后端未启动或遭遇 NetworkError 时，在客户端自动兜底直连 MiniMax（支持 CORS）
+      if (import.meta.client) {
+        try {
+          const directResult = await handleRemainsRequest(value);
+          vm.value = directResult.body;
+          state.value = directResult.body.ok ? "success" : "error";
+          error.value = directResult.body.ok ? null : directResult.body.statusLabel;
+          return;
+        } catch {
+          // 兜底失败继续走常规错误提示
+        }
+      }
+
       vm.value = readUsageErrorPayload(cause);
       state.value = "error";
       error.value = readRequestError(cause);
