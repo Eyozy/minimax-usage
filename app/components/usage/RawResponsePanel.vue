@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   raw: unknown;
-  expanded: boolean;
+  expanded?: boolean;
 }>();
 
 defineEmits<{
@@ -26,8 +26,16 @@ defineEmits<{
         </svg>
       </span>
     </button>
-    <div v-show="expanded" id="raw-response-content" class="raw-content">
-      <pre>{{ JSON.stringify(raw ?? {}, null, 2) }}</pre>
+    <div
+      id="raw-response-content"
+      class="raw-collapsible"
+      :class="{ 'is-open': expanded }"
+    >
+      <div class="raw-collapsible-inner">
+        <div class="raw-content">
+          <pre>{{ JSON.stringify(raw ?? {}, null, 2) }}</pre>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -48,6 +56,8 @@ defineEmits<{
   background: transparent;
   font-weight: 700;
   text-align: left;
+  cursor: pointer;
+  user-select: none;
   transition: background-color 150ms ease;
 }
 
@@ -68,11 +78,33 @@ defineEmits<{
   width: 1rem;
   height: 1rem;
   flex-shrink: 0;
-  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toggle-chevron.rotated {
   transform: rotate(180deg);
+}
+
+.raw-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.raw-collapsible.is-open {
+  grid-template-rows: 1fr;
+}
+
+.raw-collapsible-inner {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 250ms ease, transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.raw-collapsible.is-open .raw-collapsible-inner {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .raw-content {
@@ -82,6 +114,7 @@ defineEmits<{
 .raw-content pre {
   margin: 0;
   overflow: auto;
+  max-height: 480px;
   padding: var(--space-5);
   background: #f8fafc;
   color: var(--color-text-secondary);

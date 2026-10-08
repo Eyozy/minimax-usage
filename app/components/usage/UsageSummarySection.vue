@@ -11,9 +11,9 @@ const props = defineProps<{
 <template>
   <section class="summary-section">
     <div class="summary-header">
-      <p class="section-eyebrow">
+      <h2 class="summary-title">
         {{ title }}<span v-if="subtitle" class="section-subtitle"> · {{ subtitle }}</span>
-      </p>
+      </h2>
     </div>
     <div class="summary-grid">
       <MetricCard
@@ -36,6 +36,14 @@ const props = defineProps<{
 
 .summary-header {
   margin-top: var(--space-2);
+}
+
+.summary-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
 }
 
 .section-subtitle {

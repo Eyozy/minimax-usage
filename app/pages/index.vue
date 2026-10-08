@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: "MiniMax Token Plan 用量查询",
-  description: "MiniMax Token Plan 专属查询工具，实时查看已使用额度、剩余额度与模型消耗明细。",
+  title: "MiniMax M Plan",
+  description: "MiniMax M Plan 专属查询工具，实时查看 5 小时与周度共享调用额度、窗口重置倒计时与模型支持范围。",
 });
 </script>
 

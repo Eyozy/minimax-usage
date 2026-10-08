@@ -23,7 +23,10 @@ const textValue = computed(() => `${(props.value ?? 0).toFixed(1)}%`);
       :aria-valuenow="safeValue"
       :aria-valuetext="textValue"
     >
-      <div class="progress-fill" :style="{ width: `${safeValue}%` }"></div>
+      <div
+        class="progress-fill"
+        :style="{ transform: `scaleX(${safeValue / 100})` }"
+      />
     </div>
   </section>
 </template>
@@ -55,9 +58,12 @@ const textValue = computed(() => `${(props.value ?? 0).toFixed(1)}%`);
 }
 
 .progress-fill {
+  width: 100%;
   height: 100%;
   border-radius: 999px;
   background: var(--color-primary);
-  transition: width 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: left center;
+  will-change: transform;
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 </style>

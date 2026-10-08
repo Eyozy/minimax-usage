@@ -1,7 +1,7 @@
 :root {
-  --color-brand: #b42318;
-  --color-brand-soft: #fef3f2;
-  --color-primary: #1d4ed8;
+  --color-brand: #e2167e;
+  --color-brand-soft: #fdf2f8;
+  --color-primary: #0f172a;
   --color-primary-soft: rgba(29, 78, 216, 0.12);
   --color-success: #166534;
   --color-success-soft: rgba(21, 128, 61, 0.12);
@@ -27,6 +27,12 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --space-10: 2.5rem;
+  --control-height: 46px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --motion-fast: 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-base: 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-slow: 400ms cubic-bezier(0.16, 1, 0.3, 1);
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
@@ -53,10 +59,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-display);
   color: var(--color-text);
-  background:
-    radial-gradient(circle at top, rgba(180, 35, 24, 0.08), transparent 30%),
-    radial-gradient(circle at right bottom, rgba(29, 78, 216, 0.08), transparent 35%),
-    var(--color-background);
+  background: #f8fafc;
 }
 
 a {
@@ -104,9 +107,9 @@ svg {
 
 .page-title {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.85rem, 4vw, 2.75rem);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 
 .page-lead {
@@ -122,22 +125,28 @@ svg {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 var(--space-5);
-  border-radius: 8px;
+  min-height: var(--control-height);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-control);
   border: 1px solid transparent;
-  font-weight: 700;
-  transition: transform 150ms ease, background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  font-weight: 600;
+  transition: transform var(--motion-fast), background-color var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast), box-shadow var(--motion-fast);
 }
 
 .button-primary {
   background: var(--color-primary);
   color: #fff;
-  box-shadow: 0 10px 24px rgba(29, 78, 216, 0.22);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
 
 .button-primary:hover {
-  transform: translateY(-1px);
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.2);
+}
+
+.button-primary:active,
+.button-secondary:active {
+  transform: translateY(0.5px) scale(0.985);
 }
 
 .button-secondary {
@@ -155,18 +164,6 @@ svg {
 .focus-ring:focus-visible {
   outline: 3px solid rgba(29, 78, 216, 0.3);
   outline-offset: 2px;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

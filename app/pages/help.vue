@@ -1,42 +1,62 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: "帮助 | MiniMax Token Plan 用量查询",
-  description: "MiniMax Token Plan 查询工具的 API Key 获取、字段说明、常见问题与隐私声明。",
+  title: "帮助 | MiniMax M Plan",
+  description: "MiniMax M Plan 订阅计划额度查询工具的 API Key 获取、共享额度说明、字段解释与隐私声明。",
 });
 
 const sections = [
   {
     title: "API Key 获取",
     body: [
-      "本工具仅支持查询 MiniMax Token Plan 的用量，请确认你已开通 Token Plan。",
-      "登录 MiniMax 开放平台，前往「账户管理 / Token Plan」页面获取专属 API Key。",
-      "Token Plan API Key 与按量计费 API Key 不可互换，请勿混用。",
-      "Key 仅用于本次浏览器查询，不留存，不创建账号。",
+      "登录 MiniMax 开放平台控制台，在套餐详情中复制订阅 Key。",
+      "官方客户端 MiniMax Code 登录直接使用。Claude Code 或 Cursor 等外部工具需要填写该 Key。",
+      "订阅 Key 与按量计费 Key 完全独立，请勿混用。",
+    ],
+  },
+  {
+    title: "共享额度机制",
+    body: [
+      "所有支持模型共用同一份调用额度，不代表各模型拥有独立额度。",
+      "官方按通用池统一扣减，接口不提供单个模型的细分调用数据。",
+      "基础 Go 档位支持文本和多模态，不支持视频。Explore 和 Build 档位额外支持 H3 视频模型。",
+    ],
+  },
+  {
+    title: "双窗口刷新规则",
+    body: [
+      "文本等非视频模型按 5 小时滚动刷新，到期自动恢复满额。",
+      "视频模型按 7 天自然周刷新。",
+      "两个窗口独立计算，到期重置，未用完额度不结转。",
     ],
   },
   {
     title: "字段解释",
     body: [
-      "已使用：当前周期内已消耗的调用次数。",
-      "剩余：当前周期内剩余可用的调用次数。",
-      "重置时间：M2.7 基于 5 小时滚动窗口重置；语音、图像等其他模型每日重置。",
-      "模型明细：各模型的调用次数明细，仅展示有配额的模型。",
+      "当前剩余：5 小时周期内剩余的配额百分比。",
+      "已消耗：5 小时周期内已使用的配额比例。",
+      "本周用量：当前自然周内的累计配额消耗与剩余百分比。",
+      "窗口重置：当前周期结束倒计时，结束后额度立即恢复。",
+    ],
+  },
+  {
+    title: "额度用尽处理",
+    body: [
+      "可等待时间窗口到期自动恢复，或在控制台购买积分包补充。",
+      "调用时优先消耗套餐额度，超出部分自动从积分包扣除。",
     ],
   },
   {
     title: "常见问题",
     body: [
-      "API Key 无效？确认已完整复制，前后没有多余空格。",
-      "请求超时？先重试，再检查网络连接是否正常。",
-      "数据显示异常？展开接口原始响应核对真实字段。",
+      "提示 401 需检查服务区域，国内 Key 请直连国内服务并关闭外部代理。",
+      "额度充足却被限流通常是短时间内并发过高，稍后重试即可。",
     ],
   },
   {
     title: "隐私说明",
     body: [
-      "API Key 仅保存在当前浏览器会话，关闭后不复用。",
-      "网站不提供登录、协作、历史记录或长期存储。",
-      "如需更严格的安全策略，建议部署到自有环境中使用。",
+      "Key 仅保存在当前浏览器会话 (Session) 中直连查询，关闭标签页即自动销毁。",
+      "纯本地工具，不向任何第三方服务器上传或留存您的凭证。",
     ],
   },
 ];
@@ -45,8 +65,8 @@ const sections = [
 <template>
   <div class="help-page">
     <section class="help-hero">
-      <h1 class="page-title">帮助</h1>
-      <p class="page-lead">包含 API Key 获取、字段说明、常见问题与隐私说明。</p>
+      <h1 class="page-title">使用帮助</h1>
+      <p class="page-lead">API Key 获取、共享额度说明、字段解释与隐私声明。</p>
     </section>
 
     <div class="help-grid">
@@ -55,8 +75,9 @@ const sections = [
 
     <section class="feedback-card">
       <div class="feedback-copy">
-        <p class="feedback-eyebrow">反馈问题</p>
-        <h2 class="feedback-title">遇到问题或有建议，欢迎去 GitHub 提 Issue</h2>
+        <p class="feedback-eyebrow">反馈建议</p>
+        <h2 class="feedback-title">遇到问题或有建议，欢迎前往 GitHub 提 Issue</h2>
+        <p class="feedback-text">我们持续跟进 MiniMax 官方 API 变动与 M Plan 功能更新。</p>
       </div>
 
       <a
@@ -72,7 +93,7 @@ const sections = [
             d="M12 .5C5.649.5.5 5.649.5 12a11.5 11.5 0 0 0 7.86 10.911c.575.106.784-.25.784-.556 0-.274-.01-1-.016-1.962-3.197.695-3.872-1.541-3.872-1.541-.523-1.328-1.277-1.681-1.277-1.681-1.044-.714.079-.699.079-.699 1.154.08 1.76 1.185 1.76 1.185 1.026 1.758 2.692 1.25 3.348.956.104-.743.402-1.25.731-1.538-2.552-.29-5.236-1.276-5.236-5.682 0-1.255.449-2.282 1.184-3.086-.119-.29-.513-1.458.113-3.04 0 0 .965-.309 3.162 1.179a10.93 10.93 0 0 1 5.758 0c2.195-1.488 3.159-1.179 3.159-1.179.628 1.582.234 2.75.115 3.04.738.804 1.182 1.83 1.182 3.086 0 4.417-2.689 5.388-5.25 5.672.413.356.781 1.06.781 2.137 0 1.543-.014 2.787-.014 3.166 0 .308.206.668.79.555A11.503 11.503 0 0 0 23.5 12C23.5 5.649 18.351.5 12 .5Z"
           />
         </svg>
-        <span>反馈问题 / 提 Issue</span>
+        <span>前往 GitHub 提 Issue</span>
       </a>
     </section>
   </div>
@@ -99,11 +120,9 @@ const sections = [
   gap: var(--space-5);
   padding: clamp(1.25rem, 2vw, 1.75rem);
   border: 1px solid var(--color-border);
-  border-radius: 1.5rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96)),
-    radial-gradient(circle at top right, rgba(226, 22, 126, 0.08), transparent 38%);
-  box-shadow: 0 20px 50px -36px rgba(15, 23, 42, 0.45);
+  border-radius: var(--radius-card, 12px);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .feedback-copy {
@@ -137,8 +156,8 @@ const sections = [
   justify-content: center;
   gap: 0.65rem;
   width: fit-content;
-  padding: 0.85rem 1.15rem;
-  border-radius: 999px;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-control, 8px);
   background: var(--color-text);
   color: white;
   font-weight: 700;

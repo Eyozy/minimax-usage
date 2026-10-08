@@ -44,8 +44,9 @@ const toneClass = computed(() => {
 }
 
 .status-time {
-  color: var(--color-text-muted);
   font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 .dot {
@@ -68,7 +69,10 @@ const toneClass = computed(() => {
 .success {
   background: var(--color-success-soft);
   color: var(--color-success);
-  border-color: rgba(21, 128, 61, 0.18);
+  border-color: rgba(21, 128, 61, 0.24);
+}
+.success .status-time {
+  color: #14532d;
 }
 
 .success .dot {
@@ -78,7 +82,10 @@ const toneClass = computed(() => {
 .error {
   background: var(--color-error-soft);
   color: var(--color-error);
-  border-color: rgba(180, 35, 24, 0.18);
+  border-color: rgba(180, 35, 24, 0.24);
+}
+.error .status-time {
+  color: #991b1b;
 }
 
 .error .dot {
@@ -87,8 +94,11 @@ const toneClass = computed(() => {
 
 .warning {
   background: var(--color-warning-soft);
-  color: var(--color-warning);
-  border-color: rgba(180, 83, 9, 0.2);
+  color: #92400e;
+  border-color: rgba(180, 83, 9, 0.28);
+}
+.warning .status-time {
+  color: #78350f;
 }
 
 .warning .dot {

@@ -1,7 +1,7 @@
 <template>
   <footer class="page-shell footer">
     <div class="footer-inner">
-      <p class="footer-copy">MiniMax Token Plan 专属查询工具 · API Key 仅用于本次查询，不上传不留存</p>
+      <p class="footer-copy">MiniMax M Plan 共享额度查询工具 · API Key 仅保存在当前浏览器会话，不上传不留存</p>
       <a
         class="footer-link focus-ring"
         href="https://github.com/Eyozy/minimax-usage"
@@ -23,8 +23,9 @@
 
 <style scoped>
 .footer {
-  margin-top: var(--space-10);
+  margin-top: auto;
   padding-top: var(--space-6);
+  padding-bottom: var(--space-8);
   border-top: 1px solid var(--color-border-muted);
 }
 
