@@ -1,29 +1,36 @@
-# MiniMax Token Plan 用量查询
+# MiniMax M Plan 查询工具
 
-MiniMax Token Plan 专属查询工具，实时查看已使用额度、剩余额度与各模型消耗明细。
+专为 MiniMax M Plan 设计的轻量用量看板，实时查看套餐已使用额度、剩余额度、双周期重置倒计时。
 
-## 功能特性
+## 核心特性
 
-- 实时查询 Token Plan 已使用额度与剩余额度
-- 当前窗口与本周用量双视角查看
-- 模型级用量明细，清晰定位消耗来源
-- 移动端自适应卡片布局
-- 原始响应数据核对
-- 隐私友好 - API Key 仅用于本次查询，不留存
+- **双周期监控**：实时查看 5 小时与周度额度余量及重置倒计时。
+- **对齐官方**：展示数据与 MiniMax 官方控制台严格一致，无取整视差。
+- **共享额度**：多模型共用统一配额池，无需手动拆分计算。
+- **模型支持**：即时展示当前订阅套餐支持的全部可用模型。
+- **原始数据**：支持一键展开核验官方接口返回的原始 JSON。
+- **安全无留存**：Key 仅保存在浏览器会话，不设后端数据库，关页即销毁。
+- **流畅交互**：硬件加速渲染进度条，全站符合 WCAG AA 对比度规范。
 
 ## 本地开发
 
+### 环境要求
+- Node.js >= 20.x
+- npm >= 9.x
+
+### 安装与启动
 ```bash
+# 安装依赖
 npm install
+
+# 本地联调（同时启动前端 3001 端口与 API 3000 端口）
 npm run dev
 ```
 
-自动启动：
 - 前端：http://localhost:3001
-- API: http://localhost:3000
+- API：http://localhost:3000
 
-## 验证
-
+### 验证
 ```bash
 npm test
 npm run build
@@ -32,34 +39,24 @@ npm run build
 ## 一键部署
 
 ### Vercel
-
-1. Fork 此仓库
-2. 登录 [Vercel](https://vercel.com)
-3. Import 项目 → 选择仓库
-4. Deploy！
+1. Fork 本仓库至 GitHub；
+2. 在 Vercel 控制台导入仓库；
+3. 点击 Deploy 即刻上线（自动通过 vercel.json 托管 API）。
 
 ### Netlify
-
-1. Fork 此仓库
-2. 登录 [Netlify](https://netlify.com)
-3. Import 项目 → 选择仓库
-4. Deploy！
-
-部署后直接访问域名即可使用，无需配置任何环境变量。
-
-如果部署后点击查询没有进入结果态，优先检查：
-- 浏览器 `Network` 是否发出了 `POST /api/remains`
-- Netlify deploy log 是否成功打包了 `remains` function
-- 页面是否正常加载了 `_nuxt` 下的前端脚本资源
+1. Fork 本仓库至 GitHub；
+2. 在 Netlify 控制台导入仓库；
+3. 构建配置自动读取 netlify.toml，点击 Deploy 即刻上线。
 
 ## 获取 API Key
 
-1. 登录 [MiniMax 开放平台](https://platform.minimaxi.com/)
-2. 进入控制台 → API Key 管理
-3. 生成或查看 API Key
+1. 登录 [MiniMax 开放平台控制台](https://platform.minimax.cn/)；
+2. 进入控制台 -> 套餐详情 / 订阅管理；
+3. 复制专属订阅 API Key（通常以 sk- 或 sk-cp- 开头）；
+4. 在查询页输入 Key 查询即可。
 
-**注意**: 本工具仅支持查询 MiniMax Token Plan 的用量，请确认你已开通该服务。
+注意：本工具专为 MiniMax M Plan 订阅 Key 设计，普通按量计费 Key 不消耗此配额；如遇 1004 报错请确认 Key 是否来自国内开放平台。
 
-## License
+## 开源协议
 
-MIT
+本项目基于 [MIT License](./LICENSE) 开源。
