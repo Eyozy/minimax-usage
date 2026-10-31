@@ -32,8 +32,6 @@ onBeforeUnmount(() => {
   if (countdownTimer) clearInterval(countdownTimer);
 });
 
-type SummaryItem = { label: string; value: string; tone?: "default" | "primary" };
-
 // 官方控制台对齐算法：当剩余未满额时，官方以向下取整统计已用 (即 100 - remainingPercent - 1)
 const currentUsedPercent = computed(() => {
   const vm = query.vm.value;
@@ -51,28 +49,23 @@ const currentRemainPercent = computed(() => {
   return query.vm.value?.remainingPercent ?? null;
 });
 
-const currentItems = computed((): SummaryItem[] => {
+const currentUsedDisplay = computed(() => {
   const vm = query.vm.value;
-  if (!vm) return [];
+  if (!vm) return "--";
+  if (currentUsedPercent.value != null) return `${currentUsedPercent.value}%`;
+  return vm.usedCount != null ? formatNumber(vm.usedCount) : "--";
+});
 
-  const usedDisplay = currentUsedPercent.value != null
-    ? `${currentUsedPercent.value}%`
-    : (vm.usedCount != null ? formatNumber(vm.usedCount) : "--");
+const currentRemainDisplay = computed(() => {
+  const vm = query.vm.value;
+  if (!vm) return "--";
+  if (currentRemainPercent.value != null) return `${currentRemainPercent.value}%`;
+  return vm.remainingCount != null ? formatNumber(vm.remainingCount) : "--";
+});
 
-  const remainDisplay = currentRemainPercent.value != null
-    ? `${currentRemainPercent.value}%`
-    : (vm.remainingCount != null ? formatNumber(vm.remainingCount) : "--");
-
-  const totalDisplay = vm.totalCount != null && vm.totalCount > 0
-    ? formatNumber(vm.totalCount)
-    : "通用共享池";
-
-  return [
-    { label: "当前剩余", value: remainDisplay, tone: "primary" },
-    { label: "已消耗", value: usedDisplay },
-    { label: "额度机制", value: totalDisplay },
-    { label: "窗口重置", value: formatCountdown(vm.resetTimestamp ?? null, now.value) },
-  ];
+const currentCountdown = computed(() => {
+  const vm = query.vm.value;
+  return formatCountdown(vm?.resetTimestamp ?? null, now.value);
 });
 
 const hasWeekly = computed(() => {
@@ -102,28 +95,23 @@ const weeklyRemainPercent = computed(() => {
   return query.vm.value?.weeklyRemainingPercent ?? null;
 });
 
-const weeklyItems = computed((): SummaryItem[] => {
+const weeklyUsedDisplay = computed(() => {
   const vm = query.vm.value;
-  if (!vm) return [];
+  if (!vm) return "--";
+  if (weeklyUsedPercent.value != null) return `${weeklyUsedPercent.value}%`;
+  return vm.weeklyUsedCount != null ? formatNumber(vm.weeklyUsedCount) : "--";
+});
 
-  const weeklyRemainDisplay = weeklyRemainPercent.value != null
-    ? `${weeklyRemainPercent.value}%`
-    : (vm.weeklyRemainingCount != null ? formatNumber(vm.weeklyRemainingCount) : "--");
+const weeklyRemainDisplay = computed(() => {
+  const vm = query.vm.value;
+  if (!vm) return "--";
+  if (weeklyRemainPercent.value != null) return `${weeklyRemainPercent.value}%`;
+  return vm.weeklyRemainingCount != null ? formatNumber(vm.weeklyRemainingCount) : "--";
+});
 
-  const weeklyUsedDisplay = weeklyUsedPercent.value != null
-    ? `${weeklyUsedPercent.value}%`
-    : (vm.weeklyUsedCount != null ? formatNumber(vm.weeklyUsedCount) : "--");
-
-  const weeklyTotalDisplay = vm.weeklyTotalCount != null && vm.weeklyTotalCount > 0
-    ? formatNumber(vm.weeklyTotalCount)
-    : "全模型共享";
-
-  return [
-    { label: "本周剩余", value: weeklyRemainDisplay, tone: "primary" },
-    { label: "本周已用", value: weeklyUsedDisplay },
-    { label: "额度机制", value: weeklyTotalDisplay },
-    { label: "本周重置", value: formatCountdown(vm.weeklyResetTimestamp ?? null, now.value) },
-  ];
+const weeklyCountdown = computed(() => {
+  const vm = query.vm.value;
+  return formatCountdown(vm?.weeklyResetTimestamp ?? null, now.value);
 });
 </script>
 
@@ -141,31 +129,30 @@ const weeklyItems = computed((): SummaryItem[] => {
       @refresh="query.refresh()"
     />
 
-    <StatusBanner
-      v-if="query.hasResult.value"
-      :loading="query.loading.value"
-      :status-label="query.statusLabel.value"
-      :time-window="timeWindow"
-      :ok="isOk"
-    />
+    <Transition name="panel-fade">
+      <StatusBanner
+        v-if="query.hasResult.value"
+        :loading="query.loading.value"
+        :status-label="query.statusLabel.value"
+        :time-window="timeWindow"
+        :ok="isOk"
+      />
+    </Transition>
 
-    <UsageSummarySection
-      v-if="query.hasResult.value && query.vm.value"
-      title="当前 5 小时配额"
-      subtitle="控制文本、图像与语音等非视频模型"
-      progress-label="当前 5 小时使用进度"
-      :progress-value="currentUsedPercent"
-      :items="currentItems"
-    />
-
-    <UsageSummarySection
-      v-if="query.hasResult.value && hasWeekly"
-      title="本周累计配额"
-      subtitle="全模型共享周度总上限 · 包含 H3 视频模型"
-      progress-label="本周使用进度"
-      :progress-value="weeklyUsedPercent"
-      :items="weeklyItems"
-    />
+    <Transition name="panel-fade">
+      <UsageSummarySection
+        v-if="query.hasResult.value && query.vm.value"
+        :current-used-percent="currentUsedPercent"
+        :current-remain-display="currentRemainDisplay"
+        :current-used-display="currentUsedDisplay"
+        :current-countdown="currentCountdown"
+        :has-weekly="hasWeekly"
+        :weekly-used-percent="weeklyUsedPercent"
+        :weekly-remain-display="weeklyRemainDisplay"
+        :weekly-used-display="weeklyUsedDisplay"
+        :weekly-countdown="weeklyCountdown"
+      />
+    </Transition>
 
     <ModelsList :models="query.vm.value?.models ?? []" />
 

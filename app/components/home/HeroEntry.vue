@@ -153,7 +153,7 @@
   gap: var(--space-3);
   padding: var(--space-5);
   border: 1px solid var(--color-border-muted);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-card);
   background:
     linear-gradient(180deg, rgba(248, 250, 252, 0.94), rgba(255, 255, 255, 0.98));
 }
@@ -198,7 +198,7 @@
   display: grid;
   gap: var(--space-1);
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-control);
   background: var(--color-brand-soft);
 }
 

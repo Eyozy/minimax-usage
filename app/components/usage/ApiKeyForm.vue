@@ -107,7 +107,7 @@ const showKey = ref(false);
   height: var(--control-height, 46px);
   padding: 0 var(--space-4);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-control);
   background: #fff;
   transition: border-color 150ms ease;
 }
@@ -118,9 +118,9 @@ const showKey = ref(false);
 
 .field-input:focus,
 .field-input:focus-visible {
-  outline: none;
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
   border-color: var(--color-primary);
-  box-shadow: none;
 }
 
 .field-input:disabled {
@@ -140,18 +140,24 @@ const showKey = ref(false);
   border: none;
   background: transparent;
   color: var(--color-text-muted);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm, 6px);
   cursor: pointer;
-  transition: color 150ms ease;
+  transition: color 150ms ease, background-color 150ms ease;
 }
 
 .toggle-visibility:hover {
   color: var(--color-text);
+  background: var(--color-surface-muted);
 }
 
 .toggle-visibility svg {
   width: 1.125rem;
   height: 1.125rem;
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease;
+}
+
+.toggle-visibility:active svg {
+  transform: scale(0.88);
 }
 
 .field-hint {
@@ -165,7 +171,7 @@ const showKey = ref(false);
   height: var(--control-height, 46px);
   padding-inline: var(--space-4);
   align-self: stretch;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-control);
 }
 
 .primary-action {

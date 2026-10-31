@@ -48,7 +48,7 @@
   gap: 0.5rem;
   padding: 0.625rem 0.9rem;
   border: 1px solid var(--color-border-muted);
-  border-radius: 999px;
+  border-radius: var(--radius-control);
   color: var(--color-text-secondary);
   font-size: 0.875rem;
   font-weight: 700;

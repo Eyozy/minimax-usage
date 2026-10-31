@@ -15,10 +15,12 @@
 ## 本地开发
 
 ### 环境要求
-- Node.js >= 22.x
+
+- Node.js >= 22.23.4
 - npm >= 9.x
 
 ### 安装与启动
+
 ```bash
 # 安装依赖
 npm install
@@ -31,6 +33,7 @@ npm run dev
 - API：http://localhost:3000
 
 ### 验证
+
 ```bash
 npm test
 npm run build
@@ -39,11 +42,13 @@ npm run build
 ## 一键部署
 
 ### Vercel
+
 1. Fork 本仓库至 GitHub；
 2. 在 Vercel 控制台导入仓库；
 3. 点击 Deploy 即刻上线（自动通过 vercel.json 托管 API）。
 
 ### Netlify
+
 1. Fork 本仓库至 GitHub；
 2. 在 Netlify 控制台导入仓库；
 3. 构建配置自动读取 netlify.toml，点击 Deploy 即刻上线。

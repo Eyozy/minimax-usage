@@ -16,7 +16,7 @@
     "start:api": "node dist/api/src/server.js"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.23.4"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",

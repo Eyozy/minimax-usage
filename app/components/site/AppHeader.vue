@@ -133,7 +133,7 @@ onBeforeUnmount(() => {
   color: var(--color-text-secondary);
   font-weight: 600;
   font-size: 0.9375rem;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   position: relative;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
@@ -177,7 +177,7 @@ onBeforeUnmount(() => {
   border: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
   transition: background-color 0.15s ease;
 }
 

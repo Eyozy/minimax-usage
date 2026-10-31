@@ -1,7 +1,7 @@
 import type { UsageViewModel } from "../../shared/usage.js";
 
-const REMAINS_ENDPOINT =
-  "https://www.minimax.cn/v1/token_plan/remains";
+const PRIMARY_ENDPOINT = "https://api.minimax.chat/v1/token_plan/remains";
+const FALLBACK_ENDPOINT = "https://api.minimaxi.chat/v1/token_plan/remains";
 
 type ModelRemain = {
   start_time?: number;
@@ -227,12 +227,17 @@ export function buildUsageViewModel(result: RemainsResult): UsageViewModel {
   };
 }
 
-export async function fetchRemains(apiKey: string, fetchImpl: FetchLike = fetch): Promise<RemainsResult> {
+async function requestEndpoint(
+  endpoint: string,
+  apiKey: string,
+  fetchImpl: FetchLike,
+  timeoutMs: number,
+): Promise<RemainsResult> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15_000);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetchImpl(REMAINS_ENDPOINT, {
+    const response = await fetchImpl(endpoint, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -250,7 +255,12 @@ export async function fetchRemains(apiKey: string, fetchImpl: FetchLike = fetch)
     }
 
     if (statusCode === 1004) {
-      return { ok: false, statusCode, summary: "API Key 鉴权失败：请确认 Key 有效，且属于国内开放平台订阅（非海外版）", raw: payload };
+      return {
+        ok: false,
+        statusCode,
+        summary: "API Key 鉴权失败：请确认 Key 有效，且属于国内开放平台订阅（非海外版）",
+        raw: payload,
+      };
     }
 
     return {
@@ -270,6 +280,15 @@ export async function fetchRemains(apiKey: string, fetchImpl: FetchLike = fetch)
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+export async function fetchRemains(apiKey: string, fetchImpl: FetchLike = fetch): Promise<RemainsResult> {
+  const primaryResult = await requestEndpoint(PRIMARY_ENDPOINT, apiKey, fetchImpl, 8_000);
+  if (primaryResult.ok || primaryResult.statusCode !== null) {
+    return primaryResult;
+  }
+
+  return requestEndpoint(FALLBACK_ENDPOINT, apiKey, fetchImpl, 8_000);
 }
 
 export async function handleRemainsRequest(

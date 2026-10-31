@@ -33,7 +33,7 @@ const toneClass = computed(() => {
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
   border: 1px solid transparent;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-card);
 }
 
 .status-copy {
