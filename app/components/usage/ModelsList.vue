@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   models: Array<{
     name: string;
   }>;
@@ -13,17 +13,16 @@ const copiedId = ref<string | null>(null);
 let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
 const copyModelId = async (id: string) => {
+  if (typeof navigator === "undefined" || !navigator.clipboard) return;
   try {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      await navigator.clipboard.writeText(id);
-      copiedId.value = id;
-      if (copyTimer) clearTimeout(copyTimer);
-      copyTimer = setTimeout(() => {
-        if (copiedId.value === id) {
-          copiedId.value = null;
-        }
-      }, 1500);
-    }
+    await navigator.clipboard.writeText(id);
+    copiedId.value = id;
+    if (copyTimer) clearTimeout(copyTimer);
+    copyTimer = setTimeout(() => {
+      if (copiedId.value === id) {
+        copiedId.value = null;
+      }
+    }, 1500);
   } catch {
     // 复制异常静默回退
   }

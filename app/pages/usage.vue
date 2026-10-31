@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { UsageViewModel } from "../../shared/usage";
 import { formatCountdown, formatNumber } from "../utils/api";
 
 useSeoMeta({

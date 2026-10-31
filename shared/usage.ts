@@ -21,11 +21,6 @@ export type UsageViewModel = {
   weeklyResetInLabel: string;
   models: Array<{
     name: string;
-    timeWindow?: string;
-    totalCount?: number;
-    remainingCount?: number;
-    usedCount?: number;
-    tag?: string;
   }>;
   raw: unknown;
 };

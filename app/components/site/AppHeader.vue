@@ -64,16 +64,15 @@ const menuOpen = ref(false);
 const route = useRoute();
 
 function handleKeydown(event: KeyboardEvent) {
-  if (event.key === "Escape" && menuOpen.value) {
-    menuOpen.value = false;
-  }
+  if (!menuOpen.value || event.key !== "Escape") return;
+  menuOpen.value = false;
 }
 
 function handleOutsideClick(event: MouseEvent) {
+  if (!menuOpen.value) return;
   const target = event.target as HTMLElement | null;
-  if (menuOpen.value && target && !target.closest('.mobile-nav-wrapper')) {
-    menuOpen.value = false;
-  }
+  if (target?.closest(".mobile-nav-wrapper")) return;
+  menuOpen.value = false;
 }
 
 watch(() => route.path, () => {
